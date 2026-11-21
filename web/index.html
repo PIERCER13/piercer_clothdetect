@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piercer Cloth Detect</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app" class="app-container" style="display: none;">
+        <!-- Top Navbar Compacta -->
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z"></path>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>PIERCER <span>CLOTH DETECT</span></h1>
+                    <p class="subtitle" id="t-subtitle">Auditoria e Detecção de Roupas Duplicadas</p>
+                </div>
+            </div>
+
+            <div class="topbar-actions">
+                <!-- Seletor de Idioma -->
+                <div class="lang-switch">
+                    <button id="lang-pt" class="lang-btn active" title="Português">PT</button>
+                    <span class="lang-divider">/</span>
+                    <button id="lang-en" class="lang-btn" title="English">EN</button>
+                </div>
+
+                <button id="btn-export-csv" class="btn btn-secondary" title="Exportar relatório para Excel / CSV">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>
+                    <span id="t-btn-export">Exportar CSV</span>
+                </button>
+                <button id="btn-rescan" class="btn btn-primary" title="Escanear novamente a pasta stream">
+                    <svg id="icon-rescan" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"></path></svg>
+                    <span id="t-btn-rescan">Escanear Agora</span>
+                </button>
+                <button id="btn-close" class="btn btn-icon btn-close" title="Fechar (ESC)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Compacto -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon icon-purple">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path></svg>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label" id="t-stat-groups">Grupos Duplicados</span>
+                    <h2 id="stat-total-groups" class="stat-value">---</h2>
+                    <span class="stat-sub" id="t-stat-groups-sub">Roupas com mesma malha 3D</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon icon-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label" id="t-stat-wasted">Espaço Desperdiçado</span>
+                    <h2 id="stat-wasted-space" class="stat-value">--- MB</h2>
+                    <span class="stat-sub" id="t-stat-wasted-sub">Redundância de Streaming</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon icon-danger">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label" id="t-stat-clones">100% Clones (Mesmo Gênero)</span>
+                    <h2 id="stat-exact-same-gender" class="stat-value text-purple">---</h2>
+                    <span class="stat-sub" id="t-stat-clones-sub">Mesh + Texturas Idênticas</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon icon-info">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 00-3-3.87"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label" id="t-stat-unisex">Unissex / Props (M vs F)</span>
+                    <h2 id="stat-cross-gender" class="stat-value">---</h2>
+                    <span class="stat-sub" id="t-stat-unisex-sub">Itens compartilhados</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Controls Compacto -->
+        <section class="controls-bar">
+            <!-- Tabs -->
+            <div class="filter-tabs">
+                <button class="tab-btn active" data-filter="all"><span id="t-tab-all">Todas</span> (<span id="count-all">0</span>)</button>
+                <button class="tab-btn" data-filter="exact_match_same_gender">
+                    <span class="dot dot-danger"></span>
+                    <span id="t-tab-exact-same">100% Clones Mesmo Gênero</span> (<span id="count-exact-same">0</span>)
+                </button>
+                <button class="tab-btn" data-filter="retexture_same_gender">
+                    <span class="dot dot-warning"></span>
+                    <span id="t-tab-retexture">Retexturas Mesmo Gênero</span> (<span id="count-retexture">0</span>)
+                </button>
+                <button class="tab-btn" data-filter="exact_match_cross_gender">
+                    <span class="dot dot-purple"></span>
+                    <span id="t-tab-exact-cross">Clones Unissex M/F</span> (<span id="count-exact-cross">0</span>)
+                </button>
+                <button class="tab-btn" data-filter="cross_gender">
+                    <span class="dot dot-info"></span>
+                    <span id="t-tab-cross">Props M/F</span> (<span id="count-cross">0</span>)
+                </button>
+            </div>
+
+            <!-- Inputs -->
+            <div class="filter-inputs">
+                <div class="select-wrapper">
+                    <select id="select-category">
+                        <option value="">Todas as Categorias</option>
+                    </select>
+                </div>
+
+                <div class="select-wrapper">
+                    <select id="select-addon">
+                        <option value="">Todos os Addons</option>
+                    </select>
+                </div>
+
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="search-input" placeholder="Buscar por pasta, loja ou nome...">
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Area -->
+        <main class="content-area">
+            <div id="loading" class="loading-state hidden">
+                <div class="spinner"></div>
+                <p id="loading-text">Processando varredura das roupas...</p>
+            </div>
+
+            <div id="empty-state" class="empty-state hidden">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                <h3 id="t-empty-title">Nenhuma duplicata encontrada</h3>
+                <p id="t-empty-sub">Nenhuma roupa repetida corresponde aos filtros selecionados.</p>
+            </div>
+
+            <div id="duplicate-list" class="duplicate-list"></div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="statusbar">
+            <div class="status-left">
+                <span class="status-pill status-ready" id="t-status-ready">Pronto</span>
+                <span id="status-summary">Carregando dados...</span>
+            </div>
+            <div class="status-right">
+                <span id="status-path">stream</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal Detalhes -->
+    <div id="modal-details" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <h3 id="modal-title">Detalhes da Duplicata</h3>
+                    <p id="modal-subtitle">Visualização aprofundada dos arquivos</p>
+                </div>
+                <button id="modal-close" class="btn btn-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div id="modal-body" class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">
+        <div class="toast-message" id="toast-message">Notificação</div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
