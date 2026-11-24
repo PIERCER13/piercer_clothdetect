@@ -4,10 +4,7 @@ lua54 'yes'
 
 name 'piercer_clothdetect'
 author 'piercer'
-description 'Auditoria, detecção e quarentena de roupas duplicadas (In-Game NUI e Painel Web)'
-version '1.0.0'
 
--- Compatibilidade total com framezero_bridge para qualquer base
 dependency 'framezero_bridge'
 
 ui_page 'web/index.html'
