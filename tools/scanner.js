@@ -2,12 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-// Resolve standard stream path
 const scriptDir = __dirname;
 const resourceDir = path.resolve(scriptDir, '..');
 const defaultStreamDir = path.resolve(resourceDir, '..', '..', '[framezero-cloth]', 'style-cloth-addon', 'stream');
 
-// CLI args
 const args = process.argv.slice(2);
 let streamDir = defaultStreamDir;
 for (let i = 0; i < args.length; i++) {
