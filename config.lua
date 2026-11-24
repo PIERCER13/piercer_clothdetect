@@ -1,14 +1,11 @@
 Config = {}
 
--- Comandos in-game para abrir o painel
 Config.Commands = {
     'clothdetect',
     'clothdup',
     'roupasrepetidas'
 }
 
--- Permissões para abrir o painel (resolvidas automaticamente pelo framezero_bridge)
--- Funciona em vRP, ESX, QBCore, Qbox, Creative, etc.
 Config.Permissions = {
     bridge = { 
         'admin', 
