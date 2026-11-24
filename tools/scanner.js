@@ -163,7 +163,6 @@ for (const [size, group] of sizeGroups.entries()) {
     }
 }
 
-// Helper: fast file hash
 const fileHashCache = new Map();
 function hashFile(filePath) {
     if (fileHashCache.has(filePath)) return fileHashCache.get(filePath);
@@ -177,7 +176,6 @@ function hashFile(filePath) {
     }
 }
 
-// 3. Process Duplicate Groups
 const duplicateGroups = [];
 let totalWastedBytes = 0;
 let groupCounter = 1;
