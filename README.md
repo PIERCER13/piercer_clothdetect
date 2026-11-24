@@ -1,51 +1,50 @@
-# 👕 Piercer Cloth Detect (Roupas Repetidas)
+# piercer_clothdetect
 
-Sistema avançado de auditoria, detecção e quarentena de roupas e texturas duplicadas para FiveM.
-Desenvolvido com compatibilidade total ao **`framezero_bridge`**, funcionando em **qualquer base** (vRP, vRPex, Creative, ESX, QBCore, Qbox, etc.).
+[Português (BR)](README.pt-BR.md)
 
-Disponível em duas versões integradas com suporte bilíngue (**PT-BR / EN**):
-1. **Versão In-Game (NUI FiveM)** com comando configurável e visual compacto sem fundo escuro.
-2. **Versão Web Standalone** para abrir no seu navegador (Google Chrome, Edge, etc.) a qualquer momento com 2 cliques.
+Finds duplicate clothing models and textures in your `stream` folder by comparing `.ydd` and `.ytd` files via MD5
+hash, showing how much streaming memory each group wastes. It has an **in-game NUI** (`/clothdetect`) and a
+**web panel** (`tools/start_web.bat`) that works even with the server offline. Both are available in **English
+and Portuguese (BR)**.
 
----
+## Installation
 
-## ⚡ O que o sistema detecta?
+```cfg
+ensure framezero_bridge
+ensure piercer_clothdetect
+```
 
-Analisa os modelos 3D (`.ydd`) e texturas (`.ytd`) através de hashes criptográficos (MD5), identificando:
+In-game permission: groups in `config.lua` (via `framezero_bridge`), ACE (`add_ace group.admin piercer.admin allow`),
+or fixed `identifiers`. Requires **Node.js** installed on the server machine to run scans and quarantine actions.
 
-* **100% Clones no Mesmo Gênero (Crítico):** Exatamente o mesmo modelo 3D e texturas em pastas ou addons diferentes (ex: `mp_m_freemode_01_addon` e `addon2`), consumindo slots e memória de streaming à toa.
-* **100% Clones Unissex / Cross-Gender:** Itens idênticos duplicados entre pastas masculinas e femininas.
-* **Retexturas:** Roupas que usam o mesmo modelo 3D, mas possuem estampas/texturas diferentes.
-* **Props / Acessórios Compartilhados:** Acessórios unissex (bolsas, armas brancas, chapéus, óculos).
-* **Cálculo de Desperdício:** Mostra o espaço em MB/GB que as duplicatas consomem.
+## Language
 
----
+- Anyone can switch between `PT` and `EN` at the top of the NUI or web panel; the choice is saved in that browser.
+- All UI strings live in the `I18N` object inside `web/app.js`, shared by the NUI and the web panel.
 
-## 🚀 Como Usar
+## What it detects
 
-### 1. No Servidor FiveM (In-Game)
+| Type | Criteria | Notes |
+|---|---|---|
+| **100% Clone (same gender)** | Same `.ydd` (MD5) and identical `.ytd` files (count, size and MD5) | Critical case: wastes clothing slots and streaming memory (e.g. the exact same piece in `addon` and `addon2`). |
+| **100% Clone (unisex M/F)** | Same `.ydd` and identical `.ytd` files across `mp_m_` and `mp_f_` folders | Exact copy duplicated between male and female folders. |
+| **Retexture (same gender)** | Same `.ydd` (MD5), but different `.ytd` files | Same 3D mesh reused with different prints or texture variations. |
+| **Props / unisex (M/F)** | Same `.ydd` across `mp_m_` and `mp_f_` with different textures | Common for shared bags, hats, glasses and accessories. |
 
-1. No seu `server.cfg`, garanta que o recurso seja iniciado após o bridge:
-   ```cfg
-   ensure framezero_bridge
-   ensure piercer_clothdetect
-   ```
-2. No jogo, com uma permissão de admin configurada no `config.lua`:
-   * Digite **`/clothdetect`** (ou `/clothdup` / `/roupasrepetidas`).
-   * A interface NUI compacta abrirá na sua tela com seletor de idioma `[ PT / EN ]`.
-   * Você pode navegar pelos filtros, pesquisar roupas, ver detalhes e mover duplicatas para quarentena.
-   * Pressione **ESC** para fechar.
-3. No console do servidor:
-   * Digite `clothdetect_scan` para rodar uma nova varredura completa.
+## How it works
 
----
+- The scanner groups every `.ydd` by byte size first and only computes MD5 hashes when sizes match, keeping scans fast even on large clothing packs.
+- Within each group, the first folder found is kept as the **retained original** and the rest are marked as **redundant copies** when calculating wasted space (sorted from largest MB waste to smallest).
+- Filter by duplicate type, component category (`JBIB`, `LOWR`, `FEET`, `P_HEAD`...) and `addon` pack, search by folder name, and inspect individual `.ydd`/`.ytd` files.
+- **Quarantine**: moves (does not delete) the duplicate folder into `[framezero-cloth]/_backup_duplicatas/<addon>_<category>/<folder>`, logs the move in `data/quarantine_log.json`, and removes the entry from the active list. If the server is running, run `refresh` and restart your clothing resource afterwards (and re-sequence / rebuild `.meta` files if you remove items from the middle of an addon).
+- Every scan writes `data/duplicates.json`, `web/data.json` (read by the NUI) and `data/duplicates.csv` (also downloadable via **Export CSV**).
 
-### 2. No Navegador Web (Sem precisar do FiveM aberto)
+## Scanner and web panel
 
-1. Acesse a pasta:  
-   `resources/[framezero-dev-scripts]/piercer_clothdetect/tools`
-2. **Para rodar uma nova varredura:**
-   * Dê 2 cliques em `scan.bat`.
-3. **Para abrir o Painel Web:**
-   * Dê 2 cliques em `start_web.bat`.
-   * O painel abrirá automaticamente no seu navegador em `http://localhost:3456`.
+- **Scanning**: click **Scan Now** (NUI or web), run `clothdetect_scan` (or `clothdup_scan`) in the server console, or run `tools/scan.bat` outside the game. To scan a custom path manually: `node tools/scanner.js --stream "C:\path\to\stream"`.
+- **Web panel**: `tools/start_web.bat` opens `http://localhost:3456/`. It reads `data/duplicates.json` straight from disk and runs scans and quarantine moves through Node (`tools/web_server.js`), so it works with FiveM closed.
+
+## Settings
+
+- `config.lua`: in-game commands (`/clothdetect`, `/clothdup`, `/roupasrepetidas`) and permissions (`bridge`, `ace`, `identifiers`).
+- `tools/scanner.js`, `tools/quarantine.js` and `tools/web_server.js`: default `stream` path (`[framezero-cloth]/style-cloth-addon/stream`), backup directory (`_backup_duplicatas`) and standalone web port (`3456`).
