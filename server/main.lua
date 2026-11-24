@@ -1,7 +1,6 @@
 local RES_NAME = GetCurrentResourceName()
 local resPath = GetResourcePath(RES_NAME)
 
--- Ação de Quarentena / Isolar duplicata
 RegisterNetEvent(RES_NAME .. ':quarantine', function(targetFolderPath)
     local src = source
     if not Auth.isAllowed(src) then
@@ -19,7 +18,6 @@ RegisterNetEvent(RES_NAME .. ':quarantine', function(targetFolderPath)
     Auth.notify(src, 'success', 'Item movido para a pasta de backup/quarentena!')
 end)
 
--- Re-escanear via comando ou botão da NUI
 RegisterNetEvent(RES_NAME .. ':triggerRescan', function(requesterSrc)
     local src = requesterSrc or source
     if src ~= 0 and not Auth.isAllowed(src) then
