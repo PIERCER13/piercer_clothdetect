@@ -211,7 +211,6 @@ for (const [hash, ydds] of hashGroups.entries()) {
             const isCrossGender = genders.size > 1 && genders.has('Male') && genders.has('Female');
             const isSameGender = !isCrossGender;
 
-            // Check if textures are identical
             let isExactMatch = true;
             const firstItem = items[0];
             for (let i = 1; i < items.length; i++) {
