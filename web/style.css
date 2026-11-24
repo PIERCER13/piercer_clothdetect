@@ -46,7 +46,6 @@ body {
     align-items: center;
 }
 
-/* Scrollbar fina */
 ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
