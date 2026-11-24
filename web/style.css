@@ -33,7 +33,6 @@
     -webkit-font-smoothing: antialiased;
 }
 
-/* Fundo transparente total ao redor da tela (para ver o jogo perfeitamente) */
 body {
     background: transparent !important;
     background-color: transparent !important;
