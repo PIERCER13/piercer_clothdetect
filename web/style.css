@@ -61,7 +61,6 @@ body {
     background: var(--accent-purple);
 }
 
-/* Container compacto e centralizado */
 .app-container {
     display: none;
     width: 960px;
