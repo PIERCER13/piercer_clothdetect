@@ -37,7 +37,6 @@ RegisterNetEvent(RES_NAME .. ':triggerRescan', function(requesterSrc)
     end)
 end)
 
--- Console commands
 RegisterCommand('clothdetect_scan', function(src)
     if src ~= 0 then return end
     TriggerEvent(RES_NAME .. ':triggerRescan', 0)
@@ -48,7 +47,6 @@ RegisterCommand('clothdup_scan', function(src)
     TriggerEvent(RES_NAME .. ':triggerRescan', 0)
 end, true)
 
--- Ingame commands
 for _, cmd in ipairs(Config.Commands) do
     RegisterCommand(cmd, function(src)
         if Auth.isAllowed(src) then
