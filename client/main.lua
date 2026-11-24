@@ -29,7 +29,6 @@ local function closeUI()
     SendNUIMessage({ action = 'close' })
 end
 
--- Callbacks vindos do JavaScript da NUI
 RegisterNUICallback('close', function(_, cb)
     closeUI()
     cb({ ok = true })
