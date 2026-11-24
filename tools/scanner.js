@@ -284,7 +284,6 @@ for (const [hash, ydds] of hashGroups.entries()) {
     }
 }
 
-// Sort groups: largest wasted size first
 duplicateGroups.sort((a, b) => b.wastedBytes - a.wastedBytes);
 
 const wastedMB = (totalWastedBytes / (1024 * 1024)).toFixed(2);
