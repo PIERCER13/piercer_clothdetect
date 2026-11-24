@@ -63,7 +63,7 @@ body {
 
 /* Container compacto e centralizado */
 .app-container {
-    display: none; /* Inicia oculto! Só abre quando comando é executado */
+    display: none;
     width: 960px;
     max-width: 90vw;
     height: 620px;
