@@ -5,7 +5,6 @@ const resourceDir = path.resolve(__dirname, '..');
 const dataDir = path.join(resourceDir, 'data');
 const logFile = path.join(dataDir, 'quarantine_log.json');
 
-// Base backup dir
 const backupBaseDir = path.resolve(resourceDir, '..', '..', '[framezero-cloth]', '_backup_duplicatas');
 
 function getLog() {
@@ -32,7 +31,6 @@ function quarantineItem(targetFolderPath) {
     const folderName = path.basename(targetFolderPath);
     const dateStr = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
     
-    // Maintain relative subfolder hierarchy inside backup
     const parentDirName = path.basename(path.dirname(targetFolderPath));
     const grandParentDirName = path.basename(path.dirname(path.dirname(targetFolderPath)));
     
