@@ -26,7 +26,6 @@ function Auth.isAllowed(src)
         return true
     end
 
-    -- 3. Verificação por identificadores (license, discord, steam)
     if type(p.identifiers) == 'table' and #p.identifiers > 0 then
         for _, id in ipairs(GetPlayerIdentifiers(src)) do
             for _, allowed in ipairs(p.identifiers) do
