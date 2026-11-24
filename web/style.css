@@ -392,7 +392,6 @@ body {
     padding-left: 30px;
 }
 
-/* Área de Conteúdo */
 .content-area {
     flex: 1;
     overflow-y: auto;
@@ -406,7 +405,6 @@ body {
     gap: 10px;
 }
 
-/* Card de Duplicata */
 .group-card {
     background: #151419;
     border: 1px solid var(--border-color);
@@ -497,7 +495,6 @@ body {
     font-weight: 600;
 }
 
-/* Comparison Container */
 .comparison-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
