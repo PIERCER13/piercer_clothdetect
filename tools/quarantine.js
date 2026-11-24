@@ -41,7 +41,6 @@ function quarantineItem(targetFolderPath) {
             fs.mkdirSync(path.dirname(destDir), { recursive: true });
         }
 
-        // Rename/move folder to backup
         fs.renameSync(targetFolderPath, destDir);
 
         const log = getLog();
@@ -55,7 +54,6 @@ function quarantineItem(targetFolderPath) {
         log.push(entry);
         saveLog(log);
 
-        // Update duplicates.json by removing this item from duplicate lists
         const dupPath = path.join(dataDir, 'duplicates.json');
         if (fs.existsSync(dupPath)) {
             const data = JSON.parse(fs.readFileSync(dupPath, 'utf8'));
