@@ -246,7 +246,6 @@ for (const [hash, ydds] of hashGroups.entries()) {
                 type = 'retexture_same_gender';
             }
 
-            // Clean item representation for JSON (no need for raw ytd array paths)
             const cleanItems = items.map(it => ({
                 folderName: it.folderName,
                 folderPath: it.folderPath,
