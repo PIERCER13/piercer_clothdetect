@@ -16,7 +16,6 @@ RegisterNetEvent(RES_NAME .. ':openUI', function()
     })
 end)
 
--- Notifica a NUI para atualizar após novo scan
 RegisterNetEvent(RES_NAME .. ':rescanDone', function()
     SendNUIMessage({
         action = 'refresh'
