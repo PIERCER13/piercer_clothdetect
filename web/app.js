@@ -1,9 +1,3 @@
-/**
- * Piercer Cloth Detect - Frontend App Compacto
- * Paleta: #09090B, #151419, #25212B, #8B5CF6
- * Suporte Multilíngue: PT-BR & EN
- */
-
 const I18N = {
     pt: {
         subtitle: 'Auditoria e Detecção de Roupas Duplicadas',
