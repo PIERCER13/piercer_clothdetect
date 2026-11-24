@@ -138,7 +138,6 @@ function walk(dir) {
 walk(streamDir);
 console.log(`[FrameZero Cloth Detector] Arquivos varridos: ${totalFiles} | YDD: ${totalYdd} | YTD: ${totalYtd} em ${Date.now() - startTime}ms`);
 
-// 1. Group YDD by file size
 const sizeGroups = new Map();
 for (const ydd of allYdds) {
     if (!sizeGroups.has(ydd.size)) {
@@ -147,7 +146,6 @@ for (const ydd of allYdds) {
     sizeGroups.get(ydd.size).push(ydd);
 }
 
-// 2. Hash only size candidates
 const hashGroups = new Map();
 for (const [size, group] of sizeGroups.entries()) {
     if (group.length > 1) {
