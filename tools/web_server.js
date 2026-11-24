@@ -33,7 +33,6 @@ const server = http.createServer((req, res) => {
     const parsedUrl = new URL(req.url, `http://localhost:${PORT}`);
     const pathname = parsedUrl.pathname;
 
-    // API endpoints
     if (pathname === '/api/data' && req.method === 'GET') {
         const jsonPath = path.join(dataDir, 'duplicates.json');
         if (fs.existsSync(jsonPath)) {
@@ -78,7 +77,6 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // Static files
     let safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
     if (safePath === '/' || safePath === '\\') safePath = '/index.html';
 
