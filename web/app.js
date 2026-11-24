@@ -114,7 +114,6 @@ const isFiveM = (typeof window.GetParentResourceName === 'function') ||
 
 const resourceName = isFiveM ? window.GetParentResourceName() : 'piercer_clothdetect';
 
-// DOM elements
 const appEl = document.getElementById('app');
 const statTotalGroups = document.getElementById('stat-total-groups');
 const statWastedSpace = document.getElementById('stat-wasted-space');
