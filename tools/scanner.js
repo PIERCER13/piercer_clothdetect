@@ -219,14 +219,14 @@ for (const [hash, ydds] of hashGroups.entries()) {
                     isExactMatch = false;
                     break;
                 }
-                // Check sizes first
+
                 const firstSizes = firstItem.ytds.map(y => y.size).sort().join(',');
                 const curSizes = cur.ytds.map(y => y.size).sort().join(',');
                 if (firstSizes !== curSizes) {
                     isExactMatch = false;
                     break;
                 }
-                // If sizes match, verify with hash
+
                 const firstHashes = firstItem.ytds.map(y => hashFile(y.path)).sort().join(',');
                 const curHashes = cur.ytds.map(y => hashFile(y.path)).sort().join(',');
                 if (firstHashes !== curHashes) {
