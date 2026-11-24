@@ -1,13 +1,11 @@
 local RES_NAME = GetCurrentResourceName()
 local isUiOpen = false
 
--- Garante que inicia fechado e sem foco
 CreateThread(function()
     SetNuiFocus(false, false)
     SendNUIMessage({ action = 'close' })
 end)
 
--- Abre a interface somente quando autorizado pelo servidor
 RegisterNetEvent(RES_NAME .. ':openUI', function()
     if isUiOpen then return end
     isUiOpen = true
