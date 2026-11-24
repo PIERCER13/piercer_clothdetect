@@ -550,7 +550,6 @@ body {
     font-size: 0.68rem;
 }
 
-/* Statusbar Compacta */
 .statusbar {
     padding: 6px 18px;
     border-top: 1px solid var(--border-color);
