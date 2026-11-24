@@ -18,12 +18,10 @@ function Auth.isAllowed(src)
 
     local p = Config.Permissions
 
-    -- 1. Verificação via framezero_bridge (vRP, ESX, QBCore, etc.)
     if listHas(p.bridge, function(perm) return framezero.HasPermission(src, perm) end) then
         return true
     end
 
-    -- 2. Verificação via ACE permission nativa do FiveM
     if listHas(p.ace, function(ace) return IsPlayerAceAllowed(src, ace) end) then
         return true
     end
