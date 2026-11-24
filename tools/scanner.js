@@ -317,7 +317,6 @@ console.log(`- Props / Acessórios Unissex (M vs F): ${stats.crossGenderCount}`)
 console.log(`- Espaço Desperdiçado Estimado: ${wastedMB} MB`);
 console.log('======================================================\n');
 
-// Save outputs
 const dataDir = path.resolve(resourceDir, 'data');
 if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
