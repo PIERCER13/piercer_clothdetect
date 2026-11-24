@@ -48,7 +48,6 @@ RegisterNUICallback('quarantine', function(data, cb)
     end
 end)
 
--- Se o recurso parar, remove o foco do mouse
 AddEventHandler('onResourceStop', function(res)
     if res == RES_NAME and isUiOpen then
         SetNuiFocus(false, false)
