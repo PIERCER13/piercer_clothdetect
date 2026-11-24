@@ -101,6 +101,5 @@ server.listen(PORT, () => {
     console.log(`  Acesse no navegador: http://localhost:${PORT}`);
     console.log(`========================================================`);
     
-    // Open default browser on windows
     exec(`start http://localhost:${PORT}`);
 });
