@@ -679,7 +679,6 @@ window.addEventListener('keydown', e => {
     }
 });
 
-// FiveM NUI listener
 window.addEventListener('message', event => {
     const item = event.data;
     if (item && item.action === 'open') {
@@ -693,7 +692,6 @@ window.addEventListener('message', event => {
     }
 });
 
-// Standalone Browser
 if (!isFiveM) {
     appEl.style.display = 'flex';
     document.addEventListener('DOMContentLoaded', () => {
