@@ -22,7 +22,6 @@ RegisterNetEvent(RES_NAME .. ':rescanDone', function()
     })
 end)
 
--- Fechar a NUI
 local function closeUI()
     if not isUiOpen then return end
     isUiOpen = false
