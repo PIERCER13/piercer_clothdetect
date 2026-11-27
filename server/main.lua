@@ -1,25 +1,50 @@
 local RES_NAME = GetCurrentResourceName()
 local resPath = GetResourcePath(RES_NAME)
 
+-- O caminho vem do client e vai parar numa linha de comando: nunca é usado direto.
+-- Só passa se for igual a uma cópia listada na última varredura e não tiver caracteres
+-- que o terminal interpreta mesmo entre aspas.
+local function findDuplicate(requested)
+    if type(requested) ~= 'string' or requested == '' then return nil end
+    local raw = LoadResourceFile(RES_NAME, 'data/duplicates.json')
+    local ok, data = pcall(json.decode, raw or '')
+    if not ok or type(data) ~= 'table' then return nil end
+    for _, group in ipairs(data.groups or {}) do
+        for _, item in ipairs(group.duplicateItems or {}) do
+            if item.folderPath == requested and not requested:find('["%%$`\r\n]') then
+                return item.folderPath
+            end
+        end
+    end
+    return nil
+end
+
 RegisterNetEvent(RES_NAME .. ':quarantine', function(targetFolderPath)
     local src = source
     if not Auth.isAllowed(src) then
         return Auth.notify(src, 'error', 'Você não tem permissão para realizar esta ação.')
     end
 
-    if not targetFolderPath or targetFolderPath == '' then
-        return Auth.notify(src, 'error', 'Caminho de pasta inválido.')
+    local folder = findDuplicate(targetFolderPath)
+    if not folder then
+        return Auth.notify(src, 'error', 'Caminho recusado. Faça uma nova varredura e tente de novo.')
     end
 
-    local nodeScript = ('node "%s/tools/quarantine_cli.js" "%s"'):format(resPath, targetFolderPath:gsub('"', '\\"'))
-    os.execute(nodeScript)
+    local nodeScript = ('node "%s/tools/quarantine_cli.js" "%s"'):format(resPath, folder)
+    local ok = os.execute(nodeScript)
 
     TriggerClientEvent(RES_NAME .. ':rescanDone', src)
-    Auth.notify(src, 'success', 'Item movido para a pasta de backup/quarentena!')
+    if ok == true or ok == 0 then
+        Auth.notify(src, 'success', 'Item movido para a pasta de backup/quarentena!')
+    else
+        Auth.notify(src, 'error', 'Não foi possível mover a pasta. Veja o console do servidor.')
+    end
 end)
 
-RegisterNetEvent(RES_NAME .. ':triggerRescan', function(requesterSrc)
-    local src = requesterSrc or source
+RegisterNetEvent(RES_NAME .. ':triggerRescan', function()
+    -- quem pede é sempre o source do evento: um argumento enviado pelo client
+    -- (ex.: 0, "console") pularia a checagem de permissão. TriggerEvent local não tem source.
+    local src = tonumber(source) or 0
     if src ~= 0 and not Auth.isAllowed(src) then
         return Auth.notify(src, 'error', 'Sem permissão para re-escanear.')
     end
