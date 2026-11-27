@@ -23,7 +23,26 @@ function saveLog(log) {
     fs.writeFileSync(logFile, JSON.stringify(log, null, 2), 'utf8');
 }
 
-function quarantineItem(targetFolderPath) {
+// Só pode ir para a quarentena uma pasta que a última varredura listou como cópia redundante.
+// Qualquer outro caminho (inclusive o "original mantido") é recusado.
+function findDuplicate(targetFolderPath) {
+    const wanted = path.resolve(targetFolderPath);
+    try {
+        const data = JSON.parse(fs.readFileSync(path.join(dataDir, 'duplicates.json'), 'utf8'));
+        for (const group of data.groups || []) {
+            for (const item of group.duplicateItems || []) {
+                if (path.resolve(item.folderPath) === wanted) return item.folderPath;
+            }
+        }
+    } catch (e) {}
+    return null;
+}
+
+function quarantineItem(requestedPath) {
+    const targetFolderPath = typeof requestedPath === 'string' && requestedPath ? findDuplicate(requestedPath) : null;
+    if (requestedPath && !targetFolderPath) {
+        return { success: false, error: 'Recusado: a pasta não está na lista de cópias da última varredura.' };
+    }
     if (!targetFolderPath || !fs.existsSync(targetFolderPath)) {
         return { success: false, error: 'Pasta não encontrada ou caminho inválido.' };
     }
