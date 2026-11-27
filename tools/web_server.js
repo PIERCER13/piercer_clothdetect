@@ -19,14 +19,24 @@ const MIME_TYPES = {
     '.ico': 'image/x-icon'
 };
 
-const server = http.createServer((req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+// O painel só atende o próprio computador. Não há CORS: outras páginas não podem usá-lo.
+const HOST = '127.0.0.1';
+const LOCAL_HOSTS = [`localhost:${PORT}`, `127.0.0.1:${PORT}`];
+const MAX_BODY = 16 * 1024;
 
-    if (req.method === 'OPTIONS') {
-        res.writeHead(200);
-        return res.end();
+function isAllowedRequest(req) {
+    // Host diferente indica um domínio externo apontado para este computador
+    if (!LOCAL_HOSTS.includes(req.headers.host)) return false;
+    // o navegador envia Origin em pedidos vindos de páginas: só vale a do próprio painel
+    const origin = req.headers.origin;
+    if (origin !== undefined && !LOCAL_HOSTS.some(h => origin === `http://${h}`)) return false;
+    return req.headers['sec-fetch-site'] !== 'cross-site';
+}
+
+const server = http.createServer((req, res) => {
+    if (!isAllowedRequest(req)) {
+        res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+        return res.end('403 Forbidden');
     }
 
     const parsedUrl = new URL(req.url, `http://localhost:${PORT}`);
@@ -59,8 +69,15 @@ const server = http.createServer((req, res) => {
     }
 
     if (pathname === '/api/quarantine' && req.method === 'POST') {
+        if (!String(req.headers['content-type'] || '').startsWith('application/json')) {
+            res.writeHead(415, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: false, error: 'Envie JSON.' }));
+        }
         let body = '';
-        req.on('data', chunk => body += chunk);
+        req.on('data', chunk => {
+            body += chunk;
+            if (body.length > MAX_BODY) req.destroy();
+        });
         req.on('end', () => {
             try {
                 const payload = JSON.parse(body);
@@ -84,7 +101,10 @@ const server = http.createServer((req, res) => {
         filePath = path.join(dataDir, safePath);
     }
 
-    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+    // nunca servir arquivo fora de web/ e data/
+    const inside = [webDir, dataDir].some(base => path.resolve(filePath).startsWith(base + path.sep));
+
+    if (inside && fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
         const ext = path.extname(filePath).toLowerCase();
         const contentType = MIME_TYPES[ext] || 'application/octet-stream';
         res.writeHead(200, { 'Content-Type': contentType });
@@ -95,7 +115,7 @@ const server = http.createServer((req, res) => {
     res.end('404 Not Found');
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, HOST, () => {
     console.log(`========================================================`);
     console.log(`  FrameZero Cloth Detector - Painel Web Online!`);
     console.log(`  Acesse no navegador: http://localhost:${PORT}`);
